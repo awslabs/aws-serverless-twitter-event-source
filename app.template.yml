@@ -30,6 +30,9 @@ Parameters:
     Default: 15
     Description: Max number of tweets to send to the TweetProcessor lambda function on each invocation.
 
+Conditions:
+  IsPollingFrequencyInMinutesSingular: !Equals [!Ref PollingFrequencyInMinutes, 1]
+
 Resources:
   TwitterSearchPoller:
     Type: AWS::Serverless::Function
@@ -59,7 +62,7 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: !Sub rate(${PollingFrequencyInMinutes} minutes)
+            Schedule: !If [IsPollingFrequencyInMinutesSingular, !Sub 'rate(${PollingFrequencyInMinutes} minute)', !Sub 'rate(${PollingFrequencyInMinutes} minutes)']
 
   SearchCheckpoint:
     Type: AWS::Serverless::SimpleTable
