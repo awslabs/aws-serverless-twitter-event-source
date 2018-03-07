@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  ConsumerKey:
+    Type: String
+    Description: Twitter API Consumer Key.
+  ConsumerSecret:
+    Type: String
+    Description: Twitter API Consumer Secret.
+  AccessToken:
+    Type: String
+    Description: Twitter API Access Token.
+  AccessTokenSecret:
+    Type: String
+    Description: Twitter API Access Token Secret.
+  SearchText:
+    Type: String
+    Description: Non-URL-encoded search text poller should use when querying Twitter Search API.
+  TweetProcessorFunctionName:
+    Type: String
+    Description: Name of lambda function that should be invoked to process tweets. Note, this must be a function name and not a function ARN.
+  PollingFrequencyInMinutes:
+    Type: Number
+    MinValue: 1
+    Default: 1
+    Description: Frequency in minutes to poll for more tweets.
+  BatchSize:
+    Type: Number
+    MinValue: 1
+    Default: 15
+    Description: Max number of tweets to send to the TweetProcessor lambda function on each invocation.
+
+Resources:
+  TwitterSearchPoller:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/aws-serverless-twitter-event-source-1.0.0.jar
+      Runtime: java8
+      Handler: com.amazonaws.serverless.twittereventsource.lambda.TwitterSearchPollerHandler::handleRequest
+      Tracing: Active
+      MemorySize: 512
+      Timeout: 60
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref TweetProcessorFunctionName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SearchCheckpoint
+      Environment:
+        Variables:
+          CONSUMER_KEY: !Ref ConsumerKey
+          CONSUMER_SECRET: !Ref ConsumerSecret
+          ACCESS_TOKEN: !Ref AccessToken
+          ACCESS_TOKEN_SECRET: !Ref AccessTokenSecret
+          SEARCH_TEXT: !Ref SearchText
+          SEARCH_CHECKPOINT_TABLE_NAME: !Ref SearchCheckpoint
+          TWEET_PROCESSOR_FUNCTION_NAME: !Ref TweetProcessorFunctionName
+          BATCH_SIZE: !Ref BatchSize
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: !Sub rate(${PollingFrequencyInMinutes} minutes)
+
+  SearchCheckpoint:
+    Type: AWS::Serverless::SimpleTable
+
+Outputs:
+  TwitterSearchPollerFunctionName:
+    Value: !Ref TwitterSearchPoller
+    Export:
+      Name: !Sub ${AWS::StackName}-TwitterSearchPollerFunctionName
+  TwitterSearchPollerFunctionArn:
+    Value: !GetAtt TwitterSearchPoller.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-TwitterSearchPollerFunctionArn
+  SearchCheckpointTableName:
+    Value: !Ref SearchCheckpoint
+    Export:
+      Name: !Sub ${AWS::StackName}-SearchCheckpointTableName
+  SearchCheckpointTableArn:
+    Value: !GetAtt SearchCheckpoint.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-SearchCheckpointTableArn
