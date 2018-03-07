@@ -1,8 +1,8 @@
 package com.amazonaws.serverless.twittereventsource;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +15,7 @@ import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
 
 /**
  * Provides polling method to search for new tweets since last cutoff checkpoint.
@@ -37,16 +38,17 @@ public class TwitterSearchPoller {
      */
     public void poll() {
         Instant cutoff = checkpoint.get();
-        List<Status> tweets = findTweetsSince(cutoff);
+        LinkedHashMap<Status, String> tweetsWithRawJson = findTweetsSince(cutoff);
 
-        if (tweets.isEmpty()) {
-            log.info("No tweets found. Nothing to do.");
+        if (tweetsWithRawJson.isEmpty()) {
+            log.info("No new tweets found. Nothing to do.");
             return;
         }
 
-        tweetProcessor.accept(tweets);
+        tweetProcessor.accept(tweetsWithRawJson.values().stream()
+                .collect(Collectors.toList()));
 
-        Date mostRecent = tweets.stream()
+        Date mostRecent = tweetsWithRawJson.keySet().stream()
                 .map(Status::getCreatedAt)
                 .max(Date::compareTo)
                 .get();
@@ -54,11 +56,11 @@ public class TwitterSearchPoller {
     }
 
     @SneakyThrows(TwitterException.class)
-    private List<Status> findTweetsSince(Instant cutoff) {
+    private LinkedHashMap<Status, String> findTweetsSince(Instant cutoff) {
         Query query = new Query(queryText);
         query.setCount(100);
         QueryResult result;
-        List<Status> tweets = new ArrayList<>();
+        LinkedHashMap<Status, String> tweetsWithRawJson = new LinkedHashMap<>();
         do {
             log.info("Calling Twitter search API with query: {}", query);
             result = twitter.search(query);
@@ -69,7 +71,9 @@ public class TwitterSearchPoller {
                     .collect(Collectors.toList());
 
             log.info("{}/{} search results found within polling interval cutoff of {}.", tweetsWithinCutoff.size(), result.getTweets().size(), cutoff);
-            tweets.addAll(tweetsWithinCutoff);
+
+            // have to save Raw JSON inside the loop because TwitterObjectFactory's raw JSON cache gets cleared on each new http request
+            tweetsWithinCutoff.forEach(t -> tweetsWithRawJson.put(t, TwitterObjectFactory.getRawJSON(t)));
 
             if (tweetsWithinCutoff.size() < result.getTweets().size()) {
                 log.info("Cutoff reached. Breaking out of search loop");
@@ -77,6 +81,6 @@ public class TwitterSearchPoller {
             }
         } while ((query = result.nextQuery()) != null);
 
-        return tweets;
+        return tweetsWithRawJson;
     }
 }
