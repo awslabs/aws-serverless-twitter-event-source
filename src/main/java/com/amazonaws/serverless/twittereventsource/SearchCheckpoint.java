@@ -34,8 +34,14 @@ public class SearchCheckpoint {
     }
 
     public void update(@NonNull final Instant newCheckpoint) {
-        log.info("Updating search checkpoint to {}", newCheckpoint);
-        mapper.save(getOrDefault().withCheckpoint(Date.from(newCheckpoint)), mapperConfig);
+        CheckpointRecord record = getOrDefault();
+        if (newCheckpoint.equals(record.getCheckpoint().toInstant())) {
+            log.info("newCheckpoint {} is the same as the current checkpoint {}. Not updating.", newCheckpoint, record.getCheckpoint().toInstant());
+            return;
+        }
+
+        log.info("Updating search checkpoint from {} to {}", record.getCheckpoint().toInstant(), newCheckpoint);
+        mapper.save(record.withCheckpoint(Date.from(newCheckpoint)), mapperConfig);
     }
 
     private CheckpointRecord getOrDefault() {
