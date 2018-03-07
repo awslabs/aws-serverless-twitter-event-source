@@ -31,13 +31,16 @@ public class TwitterSearchPoller {
     private final SearchCheckpoint checkpoint;
     @NonNull
     private final TweetProcessor tweetProcessor;
+    private final boolean streamModeEnabled;
 
     /**
      * Searches for new tweets since last poll (calculated by subtracting current time from pollingInterval). Calls tweetProcessor to
      * handle any tweets found.
      */
     public void poll() {
-        Instant cutoff = checkpoint.get();
+        Instant cutoff = streamModeEnabled ? checkpoint.get() : Instant.EPOCH;
+        log.info("Stream mode enabled is {}. cutoff: {}", streamModeEnabled, cutoff);
+
         LinkedHashMap<Status, String> tweetsWithRawJson = findTweetsSince(cutoff);
 
         if (tweetsWithRawJson.isEmpty()) {

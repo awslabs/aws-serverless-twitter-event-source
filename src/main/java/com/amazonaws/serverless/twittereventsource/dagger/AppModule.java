@@ -1,8 +1,6 @@
 package com.amazonaws.serverless.twittereventsource.dagger;
 
 
-import java.time.Duration;
-
 import javax.inject.Singleton;
 
 import com.amazonaws.serverless.twittereventsource.SearchCheckpoint;
@@ -34,7 +32,7 @@ public class AppModule {
                 .setOAuthAccessToken(Env.getAccessToken())
                 .setOAuthAccessTokenSecret(Env.getAccessTokenSecret());
         TwitterFactory factory = new TwitterFactory(cb.build());
-        return new TwitterSearchPoller(Env.getSearchText(), factory.getInstance(), searchCheckpoint, tweetProcessor);
+        return new TwitterSearchPoller(Env.getSearchText(), factory.getInstance(), searchCheckpoint, tweetProcessor, Env.isStreamModeEnabled());
     }
 
     @Provides

@@ -12,6 +12,7 @@ public final class Env {
     public static final String SEARCH_CHECKPOINT_TABLE_NAME_KEY = "SEARCH_CHECKPOINT_TABLE_NAME";
     public static final String TWEET_PROCESSOR_FUNCTION_NAME_KEY = "TWEET_PROCESSOR_FUNCTION_NAME";
     public static final String BATCH_SIZE_KEY = "BATCH_SIZE";
+    private static final String STREAM_MODE_ENABLED_KEY = "STREAM_MODE_ENABLED";
 
     private Env() {
     }
@@ -46,5 +47,9 @@ public final class Env {
 
     public static int getBatchSize() {
         return Integer.parseInt(System.getenv(BATCH_SIZE_KEY));
+    }
+
+    public static boolean isStreamModeEnabled() {
+        return Boolean.valueOf(System.getenv(STREAM_MODE_ENABLED_KEY));
     }
 }
