@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.NonNull;
@@ -51,7 +52,13 @@ public class TwitterSearchPoller {
         tweetProcessor.accept(tweetsWithRawJson.values().stream()
                 .collect(Collectors.toList()));
 
-        Date mostRecent = tweetsWithRawJson.keySet().stream()
+        if (streamModeEnabled) {
+            updateCheckpoint(tweetsWithRawJson.keySet());
+        }
+    }
+
+    private void updateCheckpoint(Set<Status> tweets) {
+        Date mostRecent = tweets.stream()
                 .map(Status::getCreatedAt)
                 .max(Date::compareTo)
                 .get();
