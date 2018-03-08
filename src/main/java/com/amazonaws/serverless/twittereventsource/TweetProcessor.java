@@ -42,7 +42,7 @@ public class TweetProcessor implements Consumer<List<String>> {
     private void processBatch(List<String> tweetsAsJson) {
         String requestPayload = new JSONArray(tweetsAsJson).toString();
 
-        log.info("Invoking tweet processor lambda {} with request payload: {}", tweetProcessorFunctionName, requestPayload);
+        log.info("Invoking tweet processor lambda {} to process {} tweets", tweetProcessorFunctionName, tweetsAsJson.size());
 
         InvokeRequest invokeRequest = new InvokeRequest()
                 .withFunctionName(tweetProcessorFunctionName)
