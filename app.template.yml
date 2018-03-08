@@ -41,7 +41,7 @@ Resources:
   TwitterSearchPoller:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: target/aws-serverless-twitter-event-source-1.0.2-SNAPSHOT.jar
+      CodeUri: target/aws-serverless-twitter-event-source-1.0.2.jar
       Runtime: java8
       Handler: com.amazonaws.serverless.twittereventsource.lambda.TwitterSearchPollerHandler::handleRequest
       Tracing: Active
