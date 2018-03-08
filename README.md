@@ -16,7 +16,7 @@ This serverless app turns a twitter search query into an AWS Lambda event source
 ## Installation Steps
 
 1. [Create an AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) if you do not already have one and login
-1. Go to the app's page on the [Serverless Application Repository]() and click "Deploy"
+1. Go to the app's page on the [Serverless Application Repository](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:077246666028:applications~aws-serverless-twitter-event-source) and click "Deploy"
 1. Provide the required app parameters (see below for steps to create Twitter API parameters, e.g., Consumer Key)
 
 ### Twitter API Key Parameters
