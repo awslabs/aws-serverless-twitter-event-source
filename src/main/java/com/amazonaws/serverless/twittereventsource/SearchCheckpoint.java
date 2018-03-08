@@ -12,12 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Maintains checkpoint of last tweet timestamp visited.
+ * Manages keeping track of last checkpoint (used when stream mode is enabled).
  */
 @RequiredArgsConstructor
 @Slf4j
 public class SearchCheckpoint {
-    private static final String RECORD_KEY = "checkpoint";
+    static final String RECORD_KEY = "checkpoint";
 
     private final DynamoDBMapper mapper;
     private final DynamoDBMapperConfig mapperConfig;
@@ -29,10 +29,18 @@ public class SearchCheckpoint {
                 .build();
     }
 
+    /**
+     * @return the most recent checkpoint. If no checkpoint has been saved previously, defaults to {@link Instant#EPOCH}.
+     */
     public Instant get() {
         return getOrDefault().getCheckpoint().toInstant();
     }
 
+    /**
+     * Updates checkpoint to given value.
+     *
+     * @param newCheckpoint new checkpoint value.
+     */
     public void update(@NonNull final Instant newCheckpoint) {
         CheckpointRecord record = getOrDefault();
         if (newCheckpoint.equals(record.getCheckpoint().toInstant())) {

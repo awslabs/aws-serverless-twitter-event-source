@@ -4,6 +4,7 @@ package com.amazonaws.serverless.twittereventsource.dagger;
 import javax.inject.Singleton;
 
 import com.amazonaws.serverless.twittereventsource.SearchCheckpoint;
+import com.amazonaws.serverless.twittereventsource.TweetJsonStore;
 import com.amazonaws.serverless.twittereventsource.TweetProcessor;
 import com.amazonaws.serverless.twittereventsource.TwitterSearchPoller;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -32,7 +33,7 @@ public class AppModule {
                 .setOAuthAccessToken(Env.getAccessToken())
                 .setOAuthAccessTokenSecret(Env.getAccessTokenSecret());
         TwitterFactory factory = new TwitterFactory(cb.build());
-        return new TwitterSearchPoller(Env.getSearchText(), factory.getInstance(), searchCheckpoint, tweetProcessor, Env.isStreamModeEnabled());
+        return new TwitterSearchPoller(Env.getSearchText(), factory.getInstance(), searchCheckpoint, tweetProcessor, new TweetJsonStore(), Env.isStreamModeEnabled());
     }
 
     @Provides

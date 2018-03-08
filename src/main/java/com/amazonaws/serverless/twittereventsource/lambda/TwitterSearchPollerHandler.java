@@ -10,7 +10,7 @@ import com.amazonaws.services.lambda.runtime.events.ScheduledEvent;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Lambda request handler for scheduled poller event.
+ * Lambda request handler entrypoint for scheduled poller event.
  */
 @RequiredArgsConstructor
 public class TwitterSearchPollerHandler implements RequestHandler<ScheduledEvent, Void> {

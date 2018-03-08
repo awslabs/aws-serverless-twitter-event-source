@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Wither;
 
 /**
- * DDB record for storing the checkpoint.
+ * DDB record for storing last recorded checkpoint (used when stream mode is enabled).
  */
 @NoArgsConstructor
 @AllArgsConstructor
