@@ -6,16 +6,17 @@
 # Assumes the following are installed on the build host: AWS CLI, jq
 #
 # Depends on the following env vars being set:
-#  -TRAVIS_BUILD_ID - used to make stack names unique to this build
-#  -AWS_DEFAULT_REGION - region in which to run integ tests
-#  -AWS_ACCESS_KEY_ID - AWS access key id used for tests
-#  -AWS_SECRET_ACCESS_KEY - AWS secret access key used for tests
-#  -PACKAGING_S3_BUCKET - S3 bucket used for packaging the app code artifacts
-#  -TWITTER_CONSUMER_KEY - Twitter API consumer key
-#  -TWITTER_CONSUMER_SECRET - Twitter API consumer secret
-#  -TWITTER_ACCESS_TOKEN - Twitter API access token
-#  -TWITTER_ACCESS_TOKEN_SECRET - Twitter API access token secret
-#  -TWITTER_SEARCH_TEXT - Search text to use when querying Twitter Search API
+#  TRAVIS_BUILD_ID - used to make stack names unique to this build
+#  AWS_DEFAULT_REGION - region in which to run integ tests
+#  AWS_ACCESS_KEY_ID - AWS access key id used for tests
+#  AWS_SECRET_ACCESS_KEY - AWS secret access key used for tests
+#  PACKAGING_S3_BUCKET - S3 bucket used for packaging the app code artifacts
+#  TWITTER_CONSUMER_KEY - Twitter API consumer key (encrypted)
+#  TWITTER_CONSUMER_SECRET - Twitter API consumer secret (encrypted)
+#  TWITTER_ACCESS_TOKEN - Twitter API access token (encrypted)
+#  TWITTER_ACCESS_TOKEN_SECRET - Twitter API access token secret (encrypted)
+#  DECRYPTION_KEY_NAME - KMS key name used to encrypt Twitter API keys
+#  TWITTER_SEARCH_TEXT - Search text to use when querying Twitter Search API
 #
 
 set -e # fail script on any individual command failing
@@ -48,9 +49,10 @@ aws cloudformation deploy \
   --stack-name $app_stack_name \
   --capabilities CAPABILITY_IAM \
   --parameter-overrides \
-    ConsumerKey="$TWITTER_CONSUMER_KEY" \
-    ConsumerSecret="$TWITTER_CONSUMER_SECRET" \
-    AccessToken="$TWITTER_ACCESS_TOKEN" \
-    AccessTokenSecret="$TWITTER_ACCESS_TOKEN_SECRET" \
+    EncryptedConsumerKey="$TWITTER_CONSUMER_KEY" \
+    EncryptedConsumerSecret="$TWITTER_CONSUMER_SECRET" \
+    EncryptedAccessToken="$TWITTER_ACCESS_TOKEN" \
+    EncryptedAccessTokenSecret="$TWITTER_ACCESS_TOKEN_SECRET" \
+    DecryptionKeyName="$DECRYPTION_KEY_NAME" \
     SearchText="$TWITTER_SEARCH_TEXT" \
     TweetProcessorFunctionName="$tweet_processor_function_name"
