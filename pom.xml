@@ -6,7 +6,7 @@
 
     <groupId>com.amazonaws.serverless</groupId>
     <artifactId>aws-serverless-twitter-event-source</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>aws-serverless-twitter-event-source</name>
