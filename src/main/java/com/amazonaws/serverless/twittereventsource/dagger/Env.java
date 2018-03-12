@@ -4,10 +4,14 @@ package com.amazonaws.serverless.twittereventsource.dagger;
  * Helper class for fetching environment values.
  */
 public final class Env {
-    public static final String CONSUMER_KEY_KEY = "CONSUMER_KEY";
-    public static final String CONSUMER_SECRET_KEY = "CONSUMER_SECRET";
-    public static final String ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
-    public static final String ACCESS_TOKEN_SECRET_KEY = "ACCESS_TOKEN_SECRET";
+    public static final String ENCRYPTED_CONSUMER_KEY_KEY = "ENCRYPTED_CONSUMER_KEY";
+    public static final String ENCRYPTED_CONSUMER_SECRET_KEY = "ENCRYPTED_CONSUMER_SECRET";
+    public static final String ENCRYPTED_ACCESS_TOKEN_KEY = "ENCRYPTED_ACCESS_TOKEN";
+    public static final String ENCRYPTED_ACCESS_TOKEN_SECRET_KEY = "ENCRYPTED_ACCESS_TOKEN_SECRET";
+    public static final String PLAINTEXT_CONSUMER_KEY_KEY = "PLAINTEXT_CONSUMER_KEY";
+    public static final String PLAINTEXT_CONSUMER_SECRET_KEY = "PLAINTEXT_CONSUMER_SECRET";
+    public static final String PLAINTEXT_ACCESS_TOKEN_KEY = "PLAINTEXT_ACCESS_TOKEN";
+    public static final String PLAINTEXT_ACCESS_TOKEN_SECRET_KEY = "PLAINTEXT_ACCESS_TOKEN_SECRET";
     public static final String SEARCH_TEXT_KEY = "SEARCH_TEXT";
     public static final String SEARCH_CHECKPOINT_TABLE_NAME_KEY = "SEARCH_CHECKPOINT_TABLE_NAME";
     public static final String TWEET_PROCESSOR_FUNCTION_NAME_KEY = "TWEET_PROCESSOR_FUNCTION_NAME";
@@ -17,20 +21,36 @@ public final class Env {
     private Env() {
     }
 
-    public static String getConsumerKey() {
-        return System.getenv(CONSUMER_KEY_KEY);
+    public static String getEncryptedConsumerKey() {
+        return System.getenv(ENCRYPTED_CONSUMER_KEY_KEY);
     }
 
-    public static String getConsumerSecret() {
-        return System.getenv(CONSUMER_SECRET_KEY);
+    public static String getEncryptedConsumerSecret() {
+        return System.getenv(ENCRYPTED_CONSUMER_SECRET_KEY);
     }
 
-    public static String getAccessToken() {
-        return System.getenv(ACCESS_TOKEN_KEY);
+    public static String getEncryptedAccessToken() {
+        return System.getenv(ENCRYPTED_ACCESS_TOKEN_KEY);
     }
 
-    public static String getAccessTokenSecret() {
-        return System.getenv(ACCESS_TOKEN_SECRET_KEY);
+    public static String getEncryptedAccessTokenSecret() {
+        return System.getenv(ENCRYPTED_ACCESS_TOKEN_SECRET_KEY);
+    }
+
+    public static String getPlaintextConsumerKey() {
+        return System.getenv(PLAINTEXT_CONSUMER_KEY_KEY);
+    }
+
+    public static String getPlaintextConsumerSecret() {
+        return System.getenv(PLAINTEXT_CONSUMER_SECRET_KEY);
+    }
+
+    public static String getPlaintextAccessToken() {
+        return System.getenv(PLAINTEXT_ACCESS_TOKEN_KEY);
+    }
+
+    public static String getPlaintextAccessTokenSecret() {
+        return System.getenv(PLAINTEXT_ACCESS_TOKEN_SECRET_KEY);
     }
 
     public static String getSearchText() {
