@@ -1,18 +1,18 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Parameters:
-  SSMParameterPrefix:
-    Type: String
-    Default: 'twitter-event-source'
-    Description: >
-      This app assumes API keys needed to use the Twitter API are stored as SecureStrings in SSM Parameter Store under the prefix defined by
-      this parameter. See the app README for details.
   SearchText:
     Type: String
     Description: Non-URL-encoded search text poller should use when querying Twitter Search API.
   TweetProcessorFunctionName:
     Type: String
     Description: Name of lambda function that should be invoked to process tweets. Note, this must be a function name and not a function ARN.
+  SSMParameterPrefix:
+    Type: String
+    Default: 'twitter-event-source'
+    Description: >
+      This app assumes API keys needed to use the Twitter API are stored as SecureStrings in SSM Parameter Store under the prefix defined by
+      this parameter. See the app README for details.
   PollingFrequencyInMinutes:
     Type: Number
     MinValue: 1
