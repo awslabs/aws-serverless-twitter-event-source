@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  SSMParameterPrefix:
+    Type: String
+    Default: 'twitter-event-source'
+    Description: >
+      This app assumes API keys needed to use the Twitter API are stored as SecureStrings in SSM Parameter Store under the prefix defined by
+      this parameter. See the app README for details.
+  SearchText:
+    Type: String
+    Description: Non-URL-encoded search text poller should use when querying Twitter Search API.
+  TweetProcessorFunctionName:
+    Type: String
+    Description: Name of lambda function that should be invoked to process tweets. Note, this must be a function name and not a function ARN.
+  PollingFrequencyInMinutes:
+    Type: Number
+    MinValue: 1
+    Default: 1
+    Description: Frequency in minutes to poll for more tweets.
+  BatchSize:
+    Type: Number
+    MinValue: 1
+    Default: 15
+    Description: Max number of tweets to send to the TweetProcessor lambda function on each invocation.
+  StreamModeEnabled:
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    Description: If true, the app will remember the last tweet found and only invoke the tweet processor function for newer tweets. If false, the app will be stateless and invoke the tweet processor function with all tweets found in each polling cycle.
+
+Conditions:
+  IsPollingFrequencyInMinutesSingular: !Equals [!Ref PollingFrequencyInMinutes, 1]
+
+Resources:
+  TwitterSearchPoller:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: app/
+      Runtime: python3.6
+      Handler: poller.handler
+      Tracing: Active
+      MemorySize: 128
+      Timeout: 60
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref TweetProcessorFunctionName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SearchCheckpoint
+        - Statement:
+            Effect: Allow
+            Action:
+              - ssm:GetParameters
+            Resource: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${SSMParameterPrefix}/*
+      Environment:
+        Variables:
+          SSM_PARAMETER_PREFIX: !Ref SSMParameterPrefix
+          SEARCH_TEXT: !Ref SearchText
+          SEARCH_CHECKPOINT_TABLE_NAME: !Ref SearchCheckpoint
+          TWEET_PROCESSOR_FUNCTION_NAME: !Ref TweetProcessorFunctionName
+          BATCH_SIZE: !Ref BatchSize
+          STREAM_MODE_ENABLED: !Ref StreamModeEnabled
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: !If [IsPollingFrequencyInMinutesSingular, !Sub 'rate(${PollingFrequencyInMinutes} minute)', !Sub 'rate(${PollingFrequencyInMinutes} minutes)']
+
+  SearchCheckpoint:
+    Type: AWS::Serverless::SimpleTable
+
+Outputs:
+  TwitterSearchPollerFunctionName:
+    Value: !Ref TwitterSearchPoller
+  TwitterSearchPollerFunctionArn:
+    Value: !GetAtt TwitterSearchPoller.Arn
+  SearchCheckpointTableName:
+    Value: !Ref SearchCheckpoint
+  SearchCheckpointTableArn:
+    Value: !GetAtt SearchCheckpoint.Arn
