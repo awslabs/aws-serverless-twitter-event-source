@@ -17,6 +17,34 @@ This serverless app turns a twitter search query into an AWS Lambda event source
 
 ## Installation Steps
 
+This app is meant to be used as part of a larger application, so the recommended way to use it is to embed it as a nested app in your serverless application. To do this, paste the following into your SAM template:
+
+```yaml
+  TweetSource:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location:
+        ApplicationId: arn:aws:serverlessrepo:us-east-1:077246666028:applications/aws-serverless-twitter-event-source
+        SemanticVersion: 2.0.0
+      Parameters:
+        # Non-URL-encoded search text poller should use when querying Twitter Search API.
+        SearchText: '#serverless -filter:nativeretweets'
+        # Name of lambda function that should be invoked to process tweets. Note, this must be a function name and not a function ARN.
+        TweetProcessorFunctionName: !Ref MyFunction
+        # This app assumes API keys needed to use the Twitter API are stored as SecureStrings in SSM Parameter Store under the prefix
+        # defined by this parameter. See the app README for details.
+        #SSMParameterPrefix: twitter-event-source # Uncomment to override default value
+        # Frequency in minutes to poll for more tweets.
+        #PollingFrequencyInMinutes: 1 # Uncomment to override default value
+        # Max number of tweets to send to the TweetProcessor lambda function on each invocation.
+        #BatchSize: 15 # Uncomment to override default value
+        # If true, the app will remember the last tweet found and only invoke the tweet processor function for newer tweets.
+        # If false, the app will be stateless and invoke the tweet processor function with all tweets found in each polling cycle.
+        #StreamModeEnabled: false # Uncomment to override default value
+```
+
+Alternatively, you can deploy the application into your account manually via the [aws-serverless-twitter-event-source SAR page](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:077246666028:applications~aws-serverless-twitter-event-source).
+
 1. [Create an AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) if you do not already have one and login
 1. Go to the app's page on the [Serverless Application Repository](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:077246666028:applications~aws-serverless-twitter-event-source) and click "Deploy"
 1. Provide the required app parameters (see below for steps to create Twitter API parameters, e.g., Consumer Key)
