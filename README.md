@@ -1,5 +1,7 @@
 ## AWS Serverless Twitter Event Source
 
+![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaHVUMHdkNVc1TlpUL3Y0MTN4NlRXMmVIS3VLcGlXNFZBNFo3d2x0eEw1dzhVdmRtdEozZDZNOGNtUzFtTGZHRHZ3K0pDZ2Zqd0FYRGxybGtMN3dWb3ZRPSIsIml2UGFyYW1ldGVyU3BlYyI6IjhPT1h1U3VCeGJFbjRqM3QiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 This serverless app turns a twitter search query into an AWS Lambda event source by invoking a given lambda function to process tweets found by search. It works by periodically polling the freely available public [Twitter Standard Search API](https://developer.twitter.com/en/docs/tweets/search/overview/standard) and invoking a lambda function you provide to process tweets found.
 
 ## Architecture
