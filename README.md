@@ -48,7 +48,7 @@ The app requires the following Twitter API Keys: Consumer Key (API Key), Consume
 
 The app expects to find the Twitter API keys as encrypted SecureString values in [SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html). You can setup the required parameters via the AWS Console or using the following AWS CLI commands:
 
-```bash
+```text
 aws ssm put-parameter --name /twitter-event-source/consumer_key --value <your consumer key value> --type SecureString --overwrite
 aws ssm put-parameter --name /twitter-event-source/consumer_secret --value <your consumer secret value> --type SecureString --overwrite
 aws ssm put-parameter --name /twitter-event-source/access_token --value <your access token value> --type SecureString --overwrite
