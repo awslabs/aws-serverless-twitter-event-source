@@ -44,7 +44,7 @@ The app requires the following Twitter API Keys: Consumer Key (API Key), Consume
     1. Scroll down to the Access Token section and click "Create my access token"
     1. You will now have the Access Token and Access Token Secret values required by the app.
 
-#### Twitter API Key Setup
+### Twitter API Key Setup
 
 The app expects to find the Twitter API keys as encrypted SecureString values in [SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html). You can setup the required parameters via the AWS Console or using the following AWS CLI commands:
 
@@ -55,7 +55,7 @@ aws ssm put-parameter --name /twitter-event-source/access_token --value <your ac
 aws ssm put-parameter --name /twitter-event-source/access_token_secret --value <your access token secret value> --type SecureString --overwrite
 ```
 
-### App Parameters
+## App Parameters
 
 In addition to the Twitter API key parameters, the app also requires the following additional parameters:
 
@@ -65,6 +65,13 @@ In addition to the Twitter API key parameters, the app also requires the followi
 1. `PollingFrequencyInMinutes` (optional) - The frequency at which the lambda will poll the Twitter Search API (in minutes). Default: 1.
 1. `BatchSize` (optional) - The max number of tweets that will be sent to the TweetProcessor lambda function in a single invocation. Default: 15.
 1. `StreamModeEnabled` (optional) - If true, the app will save the latest timestamp of the previous tweets found and only invoke the tweet processor function for newer tweets. If false, the app will be stateless and invoke the tweet processor function with all tweets found in each polling cycle. Default: false.
+
+## App Outputs
+
+1. `TwitterSearchPollerFunctionName` - Name of the search poller Lambda function.
+1. `TwitterSearchPollerFunctionArn` - ARN of the search poller Lambda function.
+1. `SearchCheckpointTableName` - Name of the search checkpoint table.
+1. `SearchCheckpointTableArn` - ARN of the search checkpoint table.
 
 ## License Summary
 
