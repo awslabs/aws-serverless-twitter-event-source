@@ -1,0 +1,12 @@
+REGION = 'us-east-1'
+SEARCH_CHECKPOINT_TABLE_NAME = 'Checkpoint'
+SEARCH_TEXT = '#searchtext'
+TWEET_PROCESSOR_FUNCTION_NAME = 'TweetProcessor'
+BATCH_SIZE = '2'
+STREAM_MODE_ENABLED = 'false'
+SSM_PARAMETER_PREFIX = 'ssm_prefix'
+
+CONSUMER_KEY = 'key'
+CONSUMER_SECRET = 'secret'
+ACCESS_TOKEN = 'token'
+ACCESS_TOKEN_SECRET = 'token_secret'
