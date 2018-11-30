@@ -101,6 +101,24 @@ In addition to the Twitter API key parameters, the app also requires the followi
 1. `SearchCheckpointTableName` - Name of the search checkpoint table.
 1. `SearchCheckpointTableArn` - ARN of the search checkpoint table.
 
+## App Interface
+
+The aws-serverless-twitter-event-source app invokes the TweetProcessor function with a payload containing a JSON array of Tweet objects as they were returned from the Twitter search API. See the [Twitter API documentation](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json) for the format of tweet objects. A single invocation of the TweetProcessor will never receive more tweets than the configured batch size, but it may receive less.
+
+The TweetProcessor is invoked asynchronously by the search poller, so there is no need to return a value from the TweetProcessor function.
+
+## Upgrading from version 1.x
+
+aws-serverless-twitter-event-source v2 contains breaking changes from v1 so apps wishing to upgrade from v1 to v2 need to make changes to their existing TweetProcessor Lambda function. The major changes are:
+
+1. Added support for extended mode so longer tweets are no longer truncated. No special upgrade steps are necessary for this change.
+1. The app was previously sending the tweets to the TweetProcessor as a JSON array of strings, where each string was the Tweet JSON. This meant, the TweetProcessor function had to deserialize the JSON instead of letting Lambda's native deserialization handle it. As part of upgrading, the TweetProcessor should be updated to expect that the payload will now be an array of JSON objects, rather than an array of strings containing the JSON object data.
+1. Twitter API keys are now fetched from SSM Parameter Store instead of being passed in as app parameters. When upgrading, you must follow the installation steps above to install your Twitter API Keys as SSM Parameter Store SecureStrings **before** deploying the upgraded app.
+1. When stream mode is enabled, the app now stores the last tweet id processed instead of a timestamp. This allows the app to take advantage of the Twitter API's native support for passing in the last tweet id to continue reading only tweets after that id. If you have stream mode enabled, you will have to perform the following steps to upgrade:
+    1. Disable the CloudWatch Events Rule to stop the search poller from being invoked.
+    1. Manually delete the "checkpoint" row in the SearchCheckpoint DynamoDB table.
+    1. Re-enable the CloudWatch Events Rule to resume the search poller.
+
 ## License Summary
 
 This sample code is made available under a modified MIT license. See the LICENSE file.
