@@ -39,7 +39,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: app/
-      Runtime: python3.6
+      Runtime: python3.8
       Handler: poller.handler
       Tracing: Active
       MemorySize: 128

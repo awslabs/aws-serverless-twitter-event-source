@@ -1,5 +1,5 @@
 SHELL := /bin/sh
-PY_VERSION := 3.6
+PY_VERSION := 3.8
 
 export PYTHONUNBUFFERED := 1
 
@@ -8,7 +8,7 @@ BUILD_DIR := dist
 # Required environment variables (user must override)
 
 # S3 bucket used for packaging SAM templates
-PACKAGE_BUCKET ?= your-bucket-here
+PACKAGE_BUCKET ?= mynicebucketwithadot.dot
 
 # user can optionally override the following by setting environment variables with the same names before running make
 
@@ -41,7 +41,7 @@ package: compile
 	cp -r template.yml app $(BUILD_DIR)
 
 	# package dependencies in lib dir
-	pipenv lock --requirements > $(BUILD_DIR)/requirements.txt
+	pipenv requirements > $(BUILD_DIR)/requirements.txt
 	pipenv run pip install -t $(BUILD_DIR)/app/lib -r $(BUILD_DIR)/requirements.txt
 
 	# replace code local references with S3
