@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 "boto3" = "*"
 python-twitter = "*"
-requests = "==2.25.1"
+requests = "==2.31.0"
 
 [dev-packages]
 flake8 = "*"
